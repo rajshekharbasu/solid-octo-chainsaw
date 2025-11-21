@@ -14,7 +14,7 @@
 // ====== CONFIG ======
 
 const CONFIG = {
-    CLIENT_ID: "YOUR_SPOTIFY_CLIENT_ID_HERE",
+    CLIENT_ID: "26656546aa1143d2aa6073cd3ffcf817",
     REDIRECT_URI: window.location.origin + window.location.pathname, // e.g. https://yourdomain.com/
     SCOPES: [
       "user-read-email",
