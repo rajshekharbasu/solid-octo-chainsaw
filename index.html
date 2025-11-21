@@ -1,1404 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
-    <title>Spotify Personalized Grammys</title>
-    <meta
-      name="description"
-      content="Turn your Spotify listening history into a personalized Grammy-style award ceremony."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #05070b;
-        --bg-elevated: #111320;
-        --bg-soft: #191b2a;
-        --gold: #f5c96a;
-        --gold-soft: #f4d38d;
-        --gold-deep: #dca539;
-        --accent: #5e8bff;
-        --accent-soft: #91a8ff;
-        --error: #ff6b81;
-        --text: #f9fafb;
-        --muted: #9ca3af;
-        --border-subtle: rgba(249, 250, 251, 0.06);
-        --radius-lg: 20px;
-        --radius-xl: 28px;
-        --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
-        --transition-fast: 180ms ease-out;
-        --transition-med: 260ms ease-out;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
-        background: radial-gradient(circle at top, #1e293b 0, #020617 52%);
-        color: var(--text);
-        min-height: 100%;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: flex-start;
-      }
-
-      .page-shell {
-        min-height: 100vh;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      @media (min-width: 768px) {
-        .page-shell {
-          padding: 24px 32px 32px;
-        }
-      }
-
-      .glass-panel {
-        width: 100%;
-        max-width: 1120px;
-        background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
-        border-radius: var(--radius-xl);
-        border: 1px solid rgba(249, 250, 251, 0.06);
-        box-shadow: var(--shadow-soft);
-        padding: 18px 16px 20px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      @media (min-width: 768px) {
-        .glass-panel {
-          padding: 28px 28px 24px;
-        }
-      }
-
-      .gold-glow {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background:
-          radial-gradient(circle at 10% 0%, rgba(250, 204, 21, 0.06), transparent 55%),
-          radial-gradient(circle at 95% 5%, rgba(59, 130, 246, 0.16), transparent 60%),
-          radial-gradient(circle at 50% 120%, rgba(248, 250, 252, 0.06), transparent 60%);
-        opacity: 0.9;
-      }
-
-      .panel-inner {
-        position: relative;
-        z-index: 1;
-      }
-
-      .app-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 18px;
-      }
-
-      .branding {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .logo-orb {
-        width: 40px;
-        height: 40px;
-        border-radius: 999px;
-        background: conic-gradient(
-          from 180deg,
-          #fbbf24,
-          #f97316,
-          #facc15,
-          #f97316,
-          #fbbf24
-        );
-        border: 2px solid rgba(250, 250, 249, 0.7);
-        box-shadow:
-          0 0 0 1px rgba(0, 0, 0, 0.7),
-          0 0 20px rgba(251, 191, 36, 0.65);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .logo-orb::after {
-        content: "";
-        position: absolute;
-        inset: 40%;
-        background: radial-gradient(circle, rgba(15, 23, 42, 0.95), transparent);
-        mix-blend-mode: multiply;
-      }
-
-      .logo-icon {
-        position: relative;
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        border: 1px solid rgba(250, 250, 249, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(2px);
-      }
-
-      .logo-icon-line {
-        width: 14px;
-        height: 1.5px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.95);
-        box-shadow:
-          0 4px 0 rgba(15, 23, 42, 0.95),
-          0 -4px 0 rgba(15, 23, 42, 0.95);
-      }
-
-      .branding-text h1 {
-        margin: 0;
-        font-size: 1.1rem;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        display: flex;
-        align-items: baseline;
-        gap: 6px;
-      }
-
-      .branding-text h1 span.highlight {
-        background: linear-gradient(to right, #facc15, #f97316, #facc15);
-        -webkit-background-clip: text;
-        color: transparent;
-      }
-
-      .branding-text h1 span.submark {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: var(--muted);
-        letter-spacing: 0.16em;
-      }
-
-      .badge-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(249, 250, 251, 0.06);
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: var(--muted);
-      }
-
-      .badge-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background: #22c55e;
-        box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
-      }
-
-      .badge-pill span.gold {
-        color: var(--gold-soft);
-      }
-
-      .hero-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr);
-        gap: 20px;
-        align-items: stretch;
-        margin-bottom: 20px;
-      }
-
-      @media (min-width: 900px) {
-        .hero-layout {
-          grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-          gap: 28px;
-          align-items: center;
-        }
-      }
-
-      .hero-copy {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
-
-      .hero-title {
-        font-size: clamp(1.8rem, 3vw, 2.4rem);
-        font-weight: 600;
-        line-height: 1.15;
-      }
-
-      .hero-title-accent {
-        background: linear-gradient(to right, #facc15, #f97316, #facc15);
-        -webkit-background-clip: text;
-        color: transparent;
-      }
-
-      .hero-subtext {
-        color: var(--muted);
-        font-size: 0.92rem;
-        max-width: 32rem;
-      }
-
-      .hero-subtext strong {
-        color: var(--gold-soft);
-        font-weight: 500;
-      }
-
-      .hero-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 4px;
-        align-items: center;
-      }
-
-      .btn {
-        appearance: none;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.9rem;
-        font-weight: 500;
-        border-radius: 999px;
-        padding: 10px 18px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: transform var(--transition-fast),
-          box-shadow var(--transition-fast),
-          background var(--transition-fast),
-          color var(--transition-fast),
-          opacity 140ms ease-out;
-        white-space: nowrap;
-      }
-
-      .btn-primary {
-        background: radial-gradient(circle at 0 0, #f97316, #facc15);
-        box-shadow:
-          0 12px 35px rgba(0, 0, 0, 0.85),
-          0 0 0 1px rgba(248, 250, 252, 0.14);
-        color: #020617;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-0.5px) scale(1.02);
-        box-shadow:
-          0 18px 42px rgba(0, 0, 0, 0.9),
-          0 0 0 1px rgba(248, 250, 252, 0.18);
-      }
-
-      .btn-primary:active {
-        transform: translateY(0.5px) scale(0.99);
-        box-shadow:
-          0 8px 28px rgba(0, 0, 0, 0.85),
-          0 0 0 1px rgba(248, 250, 252, 0.16);
-      }
-
-      .btn-ghost {
-        background: rgba(15, 23, 42, 0.8);
-        color: var(--muted);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-      }
-
-      .btn-ghost:hover {
-        border-color: rgba(249, 250, 251, 0.5);
-        color: var(--gold-soft);
-      }
-
-      .btn-icon {
-        width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .btn[disabled] {
-        opacity: 0.6;
-        cursor: default;
-        transform: none;
-        box-shadow: none;
-      }
-
-      .hero-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
-        font-size: 0.8rem;
-      }
-
-      .meta-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px dashed rgba(148, 163, 184, 0.6);
-        color: var(--muted);
-        background: rgba(15, 23, 42, 0.7);
-      }
-
-      .meta-chip span {
-        color: var(--gold-soft);
-      }
-
-      .meta-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background: rgba(148, 163, 184, 0.9);
-      }
-
-      .hero-stage {
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(249, 250, 251, 0.04);
-        background: radial-gradient(circle at 0 0, #0f172a, #020617 60%);
-        padding: 14px 14px 12px;
-        position: relative;
-        overflow: hidden;
-        min-height: 220px;
-      }
-
-      @media (min-width: 900px) {
-        .hero-stage {
-          min-height: 260px;
-          padding: 16px 16px 16px;
-        }
-      }
-
-      .stage-arch {
-        position: absolute;
-        inset: -40px;
-        background:
-          radial-gradient(circle at 50% -20%, rgba(250, 204, 21, 0.22), transparent 62%),
-          radial-gradient(circle at 0 10%, rgba(56, 189, 248, 0.4), transparent 50%),
-          radial-gradient(circle at 120% 20%, rgba(129, 140, 248, 0.4), transparent 50%);
-        opacity: 0.9;
-        mix-blend-mode: screen;
-        pointer-events: none;
-      }
-
-      .stage-inner {
-        position: relative;
-        z-index: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .mini-stage-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        font-size: 0.8rem;
-      }
-
-      .mini-stage-header span.label {
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: var(--muted);
-        font-size: 0.7rem;
-      }
-
-      .mini-stage-pulse {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .pulse-badge {
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(148, 163, 184, 0.5);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.7rem;
-        color: var(--muted);
-      }
-
-      .pulse-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        background: radial-gradient(circle, #22c55e 0, #16a34a 70%, transparent 100%);
-        box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
-        animation: pulse 1.5s ease-out infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-        70% {
-          transform: scale(1.4);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1.4);
-          opacity: 0;
-        }
-      }
-
-      .mini-stage-body {
-        flex: 1;
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        gap: 10px;
-        align-items: center;
-      }
-
-      @media (max-width: 640px) {
-        .mini-stage-body {
-          grid-template-columns: minmax(0, 1fr);
-          gap: 12px;
-        }
-      }
-
-      .mini-award-card {
-        background: rgba(15, 23, 42, 0.85);
-        border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.4);
-        padding: 10px 11px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .mini-award-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
-          rgba(250, 204, 21, 0.16),
-          transparent 40%,
-          rgba(96, 165, 250, 0.18)
-        );
-        opacity: 0.85;
-        mix-blend-mode: screen;
-      }
-
-      .mini-award-inner {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 8px;
-        align-items: center;
-      }
-
-      .mini-award-icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 999px;
-        background: radial-gradient(circle at 30% 0, #f9fafb, #fbbf24 45%, #f97316 90%);
-        border: 2px solid rgba(22, 30, 51, 0.96);
-        box-shadow:
-          0 12px 28px rgba(0, 0, 0, 0.9),
-          0 0 12px rgba(251, 191, 36, 0.65);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .mini-award-icon svg {
-        width: 20px;
-        height: 20px;
-        color: #020617;
-      }
-
-      .mini-award-copy {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .mini-award-title {
-        font-size: 0.78rem;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: rgba(248, 250, 252, 0.85);
-      }
-
-      .mini-award-winner {
-        font-size: 0.86rem;
-        color: var(--gold-soft);
-        font-weight: 500;
-      }
-
-      .mini-award-meta {
-        font-size: 0.7rem;
-        color: rgba(209, 213, 219, 0.78);
-      }
-
-      .mini-timeline {
-        align-self: stretch;
-        justify-self: flex-end;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        font-size: 0.7rem;
-      }
-
-      .mini-timeline-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .mini-timeline-label {
-        color: rgba(148, 163, 184, 0.9);
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-      }
-
-      .mini-timeline-bar {
-        flex: 1;
-        height: 4px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.85);
-        overflow: hidden;
-        position: relative;
-      }
-
-      .mini-timeline-bar-fill {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, #22c55e, #facc15, #fb923c, #22c55e);
-        background-size: 200% 100%;
-        animation: shimmer 4.2s linear infinite;
-        transform-origin: left;
-      }
-
-      .mini-timeline-pill {
-        align-self: flex-end;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.78);
-        border: 1px solid rgba(148, 163, 184, 0.6);
-        color: rgba(209, 213, 219, 0.86);
-      }
-
-      @keyframes shimmer {
-        0% {
-          background-position: 0 0;
-        }
-        100% {
-          background-position: 200% 0;
-        }
-      }
-
-      .app-main {
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(249, 250, 251, 0.06);
-        background: radial-gradient(circle at top left, #020617, #020617 45%, #020617 100%);
-        padding: 12px;
-        margin-top: 4px;
-      }
-
-      @media (min-width: 768px) {
-        .app-main {
-          padding: 12px 14px 12px;
-        }
-      }
-
-      .tabs-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 10px;
-        font-size: 0.82rem;
-      }
-
-      .tabs {
-        display: inline-flex;
-        padding: 2px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(31, 41, 55, 0.9);
-      }
-
-      .tab {
-        padding: 5px 11px;
-        border-radius: 999px;
-        border: none;
-        background: transparent;
-        color: rgba(148, 163, 184, 0.92);
-        font-size: 0.78rem;
-        font-weight: 500;
-        cursor: pointer;
-        white-space: nowrap;
-      }
-
-      .tab.active {
-        background: radial-gradient(circle at 0 0, #f97316, #facc15);
-        color: #020617;
-        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.85);
-      }
-
-      .session-summary {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: flex-end;
-        color: var(--muted);
-      }
-
-      .session-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        font-size: 0.72rem;
-      }
-
-      .session-chip strong {
-        color: var(--gold-soft);
-        font-weight: 500;
-      }
-
-      .grid-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-        gap: 12px;
-      }
-
-      @media (max-width: 900px) {
-        .grid-layout {
-          grid-template-columns: minmax(0, 1fr);
-        }
-      }
-
-      .panel {
-        border-radius: 18px;
-        background: radial-gradient(circle at 0 0, #020617, #020617 50%, #020617 100%);
-        border: 1px solid var(--border-subtle);
-        padding: 10px;
-        min-height: 140px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .panel-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-      }
-
-      .panel-title {
-        font-size: 0.86rem;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: rgba(209, 213, 219, 0.96);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .panel-title-highlight {
-        color: var(--gold-soft);
-      }
-
-      .panel-header-meta {
-        font-size: 0.7rem;
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      .panel-body {
-        font-size: 0.84rem;
-      }
-
-      .state-message {
-        color: var(--muted);
-      }
-
-      .state-message strong {
-        color: var(--gold-soft);
-      }
-
-      .state-error {
-        color: var(--error);
-      }
-
-      .awards-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 4px;
-      }
-
-      .award-card {
-        border-radius: 14px;
-        padding: 8px 9px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        background: radial-gradient(
-          circle at 0 0,
-          rgba(24, 37, 55, 0.92),
-          rgba(15, 23, 42, 0.96)
-        );
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 8px;
-        align-items: center;
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
-        filter: blur(3px);
-      }
-
-      .award-card.visible {
-        animation: awardIn 540ms var(--transition-med) forwards;
-      }
-
-      .award-card.winner-highlight {
-        box-shadow:
-          0 0 0 1px rgba(250, 204, 21, 0.4),
-          0 18px 40px rgba(0, 0, 0, 0.9);
-      }
-
-      @keyframes awardIn {
-        0% {
-          opacity: 0;
-          transform: translateY(12px) scale(0.96);
-          filter: blur(4px);
-        }
-        55% {
-          opacity: 1;
-          transform: translateY(-2px) scale(1.02);
-          filter: blur(0);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-          filter: blur(0);
-        }
-      }
-
-      .award-rank {
-        font-size: 0.76rem;
-        color: rgba(148, 163, 184, 0.9);
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-      }
-
-      .award-rank span {
-        color: var(--gold-soft);
-      }
-
-      .award-main {
-        overflow: hidden;
-      }
-
-      .award-name {
-        font-size: 0.86rem;
-        color: var(--text);
-        font-weight: 500;
-      }
-
-      .award-sub {
-        font-size: 0.75rem;
-        color: rgba(148, 163, 184, 0.96);
-      }
-
-      .award-meta-pill {
-        font-size: 0.72rem;
-        padding: 3px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        color: rgba(209, 213, 219, 0.9);
-        background: rgba(15, 23, 42, 0.9);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        white-space: nowrap;
-      }
-
-      .award-meta-pill strong {
-        color: var(--gold-soft);
-      }
-
-      .award-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        background: radial-gradient(circle at 30% 0, #fef9c3, #fbbf24);
-        color: #020617;
-        font-size: 0.7rem;
-        font-weight: 700;
-        box-shadow:
-          0 10px 22px rgba(0, 0, 0, 0.9),
-          0 0 0 1px rgba(15, 23, 42, 0.95);
-      }
-
-      .award-badge.secondary {
-        background: radial-gradient(circle at 30% 0, #e5e7eb, #9ca3af);
-        color: #020617;
-      }
-
-      .award-badge.tertiary {
-        background: radial-gradient(circle at 30% 0, #e5e7eb, #6b7280);
-        color: #020617;
-      }
-
-      .award-card .artwork {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-right: 4px;
-        border: 1px solid rgba(15, 23, 42, 0.96);
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.85);
-        flex-shrink: 0;
-      }
-
-      .award-card .artwork img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .award-main-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .award-meta-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 3px;
-      }
-
-      .ceremony-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-top: 10px;
-        font-size: 0.78rem;
-      }
-
-      .control-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        align-items: center;
-      }
-
-      .control-label {
-        color: var(--muted);
-      }
-
-      .pill-toggle {
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        padding: 3px 6px;
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-      }
-
-      .pill-toggle button {
-        border: none;
-        background: transparent;
-        color: rgba(148, 163, 184, 0.95);
-        font-size: 0.72rem;
-        padding: 3px 6px;
-        border-radius: 999px;
-        cursor: pointer;
-      }
-
-      .pill-toggle button.active {
-        background: rgba(15, 23, 42, 0.98);
-        color: var(--gold-soft);
-      }
-
-      .ceremony-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        justify-content: flex-end;
-      }
-
-      .btn-xs {
-        padding: 4px 8px;
-        font-size: 0.72rem;
-      }
-
-      .toast-container {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        z-index: 50;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-width: min(360px, 80vw);
-      }
-
-      @media (max-width: 640px) {
-        .toast-container {
-          right: 12px;
-          left: 12px;
-          bottom: 12px;
-          max-width: 100%;
-        }
-      }
-
-      .toast {
-        border-radius: 16px;
-        background: rgba(15, 23, 42, 0.96);
-        border: 1px solid rgba(249, 250, 251, 0.08);
-        padding: 10px 11px;
-        box-shadow:
-          0 18px 40px rgba(0, 0, 0, 0.85),
-          0 0 0 1px rgba(15, 23, 42, 1);
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 8px;
-        align-items: flex-start;
-        font-size: 0.8rem;
-        opacity: 0;
-        transform: translateY(8px) translateX(4px) scale(0.96);
-        filter: blur(3px);
-        animation: toastIn 260ms var(--transition-med) forwards;
-      }
-
-      @keyframes toastIn {
-        0% {
-          opacity: 0;
-          transform: translateY(8px) translateX(4px) scale(0.96);
-          filter: blur(3px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0) translateX(0) scale(1);
-          filter: blur(0);
-        }
-      }
-
-      .toast-kicker {
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        font-size: 0.7rem;
-        color: rgba(148, 163, 184, 0.96);
-        margin-bottom: 2px;
-      }
-
-      .toast-title {
-        font-weight: 500;
-        color: var(--gold-soft);
-        margin-bottom: 2px;
-      }
-
-      .toast-body {
-        color: rgba(209, 213, 219, 0.9);
-      }
-
-      .toast-meta {
-        font-size: 0.72rem;
-        color: rgba(148, 163, 184, 0.96);
-        margin-top: 2px;
-      }
-
-      .toast-close {
-        border: none;
-        background: transparent;
-        color: rgba(148, 163, 184, 0.96);
-        cursor: pointer;
-        font-size: 0.8rem;
-      }
-
-      .toast-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 999px;
-        background: radial-gradient(circle at 30% 0, #fef9c3, #fbbf24);
-        color: #020617;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.8rem;
-        box-shadow:
-          0 10px 22px rgba(0, 0, 0, 0.9),
-          0 0 0 1px rgba(15, 23, 42, 0.95);
-      }
-
-      .status-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        font-size: 0.7rem;
-        color: rgba(148, 163, 184, 0.96);
-      }
-
-      .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: radial-gradient(circle, #22c55e 0, #16a34a 70%, transparent 100%);
-        box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
-      }
-
-      .status-dot.error {
-        background: radial-gradient(circle, #fb7185 0, #f97373 70%, transparent 100%);
-        box-shadow: 0 0 10px rgba(248, 113, 113, 0.9);
-      }
-
-      .confetti-layer {
-        pointer-events: none;
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        z-index: 40;
-      }
-
-      .confetto {
-        position: absolute;
-        width: 8px;
-        height: 14px;
-        border-radius: 3px;
-        opacity: 0;
-        will-change: transform, opacity;
-      }
-
-      .hide {
-        display: none !important;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="page-shell">
-      <main class="glass-panel">
-        <div class="gold-glow"></div>
-        <div class="panel-inner">
-          <header class="app-header">
-            <div class="branding">
-              <div class="logo-orb">
-                <div class="logo-icon">
-                  <div class="logo-icon-line"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Watch your own Spotify Personalized Grammys ceremony." />
+  <title>Spotify Personalized Grammys</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050510;
+      --panel: rgba(10, 12, 24, 0.9);
+      --text: #f5f5f9;
+      --muted: #9ea3c1;
+      --gold: #f6c453;
+      --border: rgba(255, 255, 255, 0.1);
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+      --shadow: 0 22px 40px rgba(0, 0, 0, 0.65);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1d1c3c, #050510 60%, #000);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(5, 5, 20, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+
+    nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: conic-gradient(from 220deg, #f6c453, #ff9f43, #ff6b81, #4dd0e1, #f6c453);
+      box-shadow: 0 0 18px rgba(246, 196, 83, 0.7);
+    }
+
+    .logo h1 {
+      font-family: "Playfair Display", "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+    }
+
+    .logo span {
+      display: block;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.25rem 0.8rem;
+      font-size: 0.75rem;
+      color: var(--gold);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-profile {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .nav-profile img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn {
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 0.5rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(120deg, #f6c453, #ff9f43, #ff6b81);
+      color: #120d07;
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--muted);
+      background: transparent;
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+    }
+
+    .hero,
+    .landing-overlay,
+    .ceremony-container {
+      max-width: 960px;
+      margin: 0 auto;
+      width: calc(100% - 2rem);
+    }
+
+    .hero {
+      padding: 2.4rem 0 1.2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+      align-items: center;
+    }
+
+    .hero h2 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 4.8vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 0.8rem;
+    }
+
+    .hero h2 span { color: var(--gold); }
+    .hero p { color: var(--muted); margin-bottom: 1.2rem; }
+
+    .hero-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      background:
+        radial-gradient(circle at top left, rgba(246, 196, 83, 0.2), transparent 65%),
+        linear-gradient(160deg, rgba(8, 9, 20, 0.95), rgba(5, 5, 12, 0.95));
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card small {
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .landing-overlay {
+      padding-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .landing-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .landing-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    .step {
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      padding: 0.8rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .ceremony-container {
+      display: none;
+      padding-bottom: 2rem;
+    }
+
+    .ceremony-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 1.2rem;
+    }
+
+    .ceremony-stage {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      background:
+        radial-gradient(circle at top, rgba(246, 196, 83, 0.18), transparent 60%),
+        linear-gradient(150deg, #141427, #050510);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ceremony-header-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .ceremony-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .ceremony-user-name { font-size: 1.2rem; font-weight: 600; }
+    .ceremony-meta { font-size: 0.82rem; color: var(--muted); }
+
+    .ceremony-body {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .award-winner {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(246, 196, 83, 0.6);
+      padding: 0.5rem 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 0 15px rgba(246, 196, 83, 0.5);
+    }
+
+    .award-winner-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 25% 15%, #fff, #f6c453 45%, #ff9f43 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #120d07;
+    }
+
+    .award-artwork {
+      width: 120px;
+      height: 120px;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-left: auto;
+      background: radial-gradient(circle, #f6c453, #ff6b81);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .award-artwork img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .nominees-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.7rem;
+      background: rgba(5, 5, 12, 0.8);
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .sidebar {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .timeline { display: flex; flex-direction: column; gap: 0.6rem; max-height: 220px; overflow-y: auto; }
+    .timeline-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; }
+    .timeline-dot-inner { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+    .timeline-dot-current .timeline-dot-inner { background: var(--gold); box-shadow: 0 0 8px rgba(246,196,83,0.8); }
+
+    .stat-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; font-size: 0.76rem; color: var(--muted); }
+    .stat-chip { border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.15); padding: 0.18rem 0.6rem; background: rgba(5,5,16,0.75); }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 16, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .loading-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 1.2rem 1.4rem;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 300px;
+    }
+
+    .loading-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--gold);
+      border-right-color: #ff6b81;
+      margin: 0 auto 0.8rem;
+      animation: spin 1s linear infinite;
+    }
+
+    .toast-container {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 60;
+      max-width: 320px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(246,196,83,0.45);
+      padding: 0.7rem 0.85rem;
+      background: rgba(5,5,12,0.95);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.7);
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      animation: toast-in 0.25s ease-out forwards;
+    }
+
+    .toast-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 25% 15%, #fff, #f6c453 45%, #ff9f43 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #120d07;
+      font-size: 0.8rem;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-size: 1rem;
+      margin-left: auto;
+    }
+
+    .confetti-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .confetto {
+      position: absolute;
+      width: 6px;
+      height: 12px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confetti-fall 2.4s ease-out forwards;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes toast-in { from { opacity:0; transform: translateY(10px) scale(0.95); } to { opacity:1; transform: translateY(0) scale(1); } }
+    @keyframes confetti-fall {
+      0% { opacity:0; transform: translateY(-20px) rotateZ(0deg); }
+      15% { opacity:1; }
+      100% { opacity:0; transform: translateY(220px) rotateZ(280deg); }
+    }
+
+    @media (max-width: 840px) {
+      .ceremony-layout { grid-template-columns: minmax(0, 1fr); }
+      .ceremony-body { grid-template-columns: minmax(0, 1fr); }
+      .award-artwork { margin: 0 auto; }
+      .award-tagline { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-root">
+    <header>
+      <nav>
+        <div class="logo">
+          <div class="logo-mark"></div>
+          <div>
+            <h1>Spotify Personalized Grammys</h1>
+            <span>Your year in awards</span>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <div class="chip">Powered by your Spotify history</div>
+          <div class="nav-profile" id="navProfile">
+            <img id="navProfileImg" alt="" />
+            <span id="navProfileName"></span>
+          </div>
+          <button class="btn btn-ghost" id="logoutBtn" style="display: none">Log out</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <h2>Your own <span>Spotify Personalized Grammys</span> ceremony.</h2>
+          <p>Log in with Spotify to unlock personalized awards like Most Played Track, Breakout Artist, Peak Listening Hour, and more.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 0.5rem;">
+            <button class="btn btn-primary" id="loginBtn">Login with Spotify</button>
+            <button class="btn btn-ghost" id="demoBtn">Preview with sample data</button>
+          </div>
+          <p style="font-size: 0.76rem; color: var(--muted);">
+            We only request read access to your Spotify stats directly in your browser. No servers, no storage.
+          </p>
+        </div>
+        <div class="hero-card">
+          <small>Tonight's teaser</small>
+          <div>
+            <strong style="display:block; font-size:1.05rem;">Most Played Track</strong>
+            <span style="color: var(--muted); font-size:0.85rem;">Revealed once you log in.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-overlay" id="landingOverlay">
+        <div class="landing-card">
+          <h3>How it works</h3>
+          <p>We use Spotify’s official OAuth flow plus Web API endpoints like <code>/me/top/tracks</code> and <code>/me/player/recently-played</code> to compute your ceremony locally.</p>
+          <div class="landing-steps">
+            <div class="step">
+              <strong>1. Connect Spotify</strong>
+              <p>Authorize read-only access to top tracks, artists, and recent plays.</p>
+            </div>
+            <div class="step">
+              <strong>2. Fetch stats</strong>
+              <p>We gather data from multiple time ranges to spot trends.</p>
+            </div>
+            <div class="step">
+              <strong>3. Enjoy awards</strong>
+              <p>Categories reveal one by one with nominee lists, toasts, and confetti.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="landingLoginBtn" style="margin-top: 1rem;">Login with Spotify</button>
+        </div>
+      </section>
+
+      <section class="ceremony-container" id="ceremonyContainer">
+        <div class="ceremony-layout">
+          <div class="ceremony-stage" id="ceremonyStage">
+            <div class="confetti-layer" id="confettiLayer"></div>
+            <div class="ceremony-header-row">
+              <div>
+                <div class="ceremony-title">Spotify Personalized Grammys</div>
+                <div class="ceremony-user-name" id="ceremonyUserName">Your Ceremony</div>
+                <div class="ceremony-meta" id="ceremonyMetaText">Analyzing your listening…</div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                <button class="btn btn-ghost btn-sm" id="replayBtn" disabled>Replay</button>
+                <button class="btn btn-ghost btn-sm" id="shareBtn" disabled>Share</button>
+                <button class="btn btn-ghost btn-sm" id="downloadVideoBtn" disabled title="Video export coming soon">⬇</button>
+              </div>
+            </div>
+            <div class="ceremony-body" id="ceremonyBody">
+              <div>
+                <div class="award-category" id="awardCategoryLabel">Category</div>
+                <div class="award-name" id="awardName">Most Played Track</div>
+                <div class="award-winner" id="awardWinner">
+                  <div class="award-winner-badge">★</div>
+                  <div>
+                    <strong id="awardWinnerTitle">Your #1 song</strong>
+                    <div id="awardWinnerSubtitle" style="font-size:0.78rem; color:var(--muted);"></div>
+                  </div>
+                </div>
+                <p class="award-description" id="awardDescription">We’ll reveal each personalized award once your Spotify stats finish loading.</p>
+                <p class="award-explanation" id="awardExplanation"></p>
+                <div class="nominees-card hidden" id="nomineesCard">
+                  <div class="nominees-title">Nominees</div>
+                  <div id="nomineesList"></div>
                 </div>
               </div>
-              <div class="branding-text">
-                <h1>
-                  <span class="highlight">Spotify Personalized Grammys</span>
-                  <span class="submark">Audience of one</span>
-                </h1>
-                <div class="badge-pill">
-                  <span class="badge-dot"></span>
-                  <span>Powered by <span class="gold">Spotify</span> listening data</span>
-                </div>
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.6rem;">
+                <div class="award-artwork" id="awardArtwork"></div>
+                <div class="award-tagline" id="awardTagline" style="font-size:0.78rem; color:var(--muted);">Best enjoyed with headphones on.</div>
               </div>
+            </div>
+          </div>
+          <aside class="sidebar">
+            <div>
+              <h4 style="text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.4rem;">
+                Ceremony timeline
+              </h4>
+              <div class="timeline" id="timelineList"></div>
             </div>
             <div>
-              <button id="login-button" class="btn btn-primary">
-                <span class="btn-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-                    <circle cx="12" cy="12" r="10" fill="#22c55e" />
-                    <path
-                      d="M7 10.5c2.4-1 5.1-.9 7.5.2M8 13.5c1.8-.6 3.9-.5 5.7.4M9 16c1.4-.3 2.7-.2 4 .3"
-                      stroke="#020617"
-                      stroke-width="1.4"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                </span>
-                <span id="login-button-label">Login with Spotify</span>
-              </button>
+              <h4 style="text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.4rem;">
+                Listening stats snapshot
+              </h4>
+              <div class="stat-chips" id="statChips"></div>
             </div>
-          </header>
-
-          <section class="hero-layout">
-            <div class="hero-copy">
-              <div class="hero-title">
-                Your listening history, reimagined as a
-                <span class="hero-title-accent">Grammy night for one.</span>
-              </div>
-              <p class="hero-subtext">
-                We turn your Spotify stats into
-                <strong>bespoke awards</strong>: Most Played Track, Breakout Artist,
-                Peak Listening Hour, Underdog Champion, and more. No leaderboards, no
-                judgment&mdash;just a cinematic ceremony celebrating your taste.
-              </p>
-              <div class="hero-actions">
-                <button id="primary-cta" class="btn btn-primary">
-                  <span>Start my ceremony</span>
-                  <span class="btn-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                      <path
-                        d="M6 5.5h8.5M13.5 5.5L18 10m0 0v8.5M18 10l-5.5 4.5"
-                        stroke="#020617"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </span>
-                </button>
-                <button id="demo-cta" class="btn btn-ghost" type="button">
-                  Watch a sample run
-                </button>
-              </div>
-              <div class="hero-meta">
-                <div class="meta-chip">
-                  <div class="meta-dot"></div>
-                  <span>Runs locally with your <span>Spotify</span> data</span>
-                </div>
-                <div class="meta-chip">
-                  <div class="meta-dot"></div>
-                  <span>Deploy-ready for <span>Vercel</span> and <span>Netlify</span></span>
-                </div>
-              </div>
-            </div>
-
-            <div class="hero-stage">
-              <div class="stage-arch"></div>
-              <div class="stage-inner">
-                <div class="mini-stage-header">
-                  <span class="label">Live ceremony preview</span>
-                  <div class="mini-stage-pulse">
-                    <div class="pulse-badge">
-                      <div class="pulse-dot"></div>
-                      <span id="preview-status-label">Awaiting your login</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="mini-stage-body">
-                  <div class="mini-award-card">
-                    <div class="mini-award-inner">
-                      <div class="mini-award-icon">
-                        <svg viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M8 18.5h8m-6-2.5 1.4-7.7A1 1 0 0 1 12.4 8l2.6 5.8"
-                            stroke="#020617"
-                            stroke-width="1.6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <circle cx="16.2" cy="13.5" r="1.4" fill="#020617" />
-                        </svg>
-                      </div>
-                      <div class="mini-award-copy">
-                        <div class="mini-award-title">Most Played Track</div>
-                        <div class="mini-award-winner" id="mini-award-track">
-                          &ldquo;Waiting for your stats&rdquo;
-                        </div>
-                        <div class="mini-award-meta" id="mini-award-artist">
-                          Your 2025 headliner will appear here
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mini-timeline">
-                    <div class="mini-timeline-row">
-                      <span class="mini-timeline-label">Reveal queue</span>
-                      <div class="mini-timeline-bar">
-                        <div class="mini-timeline-bar-fill"></div>
-                      </div>
-                    </div>
-                    <div class="mini-timeline-pill">
-                      <span id="mini-timeline-label">0 awards queued</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="app-main" aria-live="polite">
-            <div class="tabs-row">
-              <div class="tabs" role="tablist" aria-label="Ceremony views">
-                <button
-                  id="tab-ceremony"
-                  class="tab active"
-                  type="button"
-                  role="tab"
-                  aria-selected="true"
-                >
-                  Ceremony
-                </button>
-                <button
-                  id="tab-breakdown"
-                  class="tab"
-                  type="button"
-                  role="tab"
-                  aria-selected="false"
-                >
-                  Data breakdown
-                </button>
-              </div>
-              <div class="session-summary">
-                <div class="session-chip" id="session-chip">
-                  <span>Not connected</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid-layout">
-              <section class="panel" aria-labelledby="panel-ceremony-title">
-                <header class="panel-header">
-                  <h2 id="panel-ceremony-title" class="panel-title">
-                    <span class="panel-title-highlight">Awards</span> ceremony
-                  </h2>
-                  <div class="panel-header-meta">
-                    <span id="ceremony-status-label">Waiting for Spotify login</span>
-                  </div>
-                </header>
-                <div id="ceremony-panel-body" class="panel-body">
-                  <p class="state-message">
-                    Sign in with Spotify to let us compute your personal winners for:
-                    <strong>Most Played Track, Top Artist, Breakout Artist, Comeback
-                      Artist, One-Hit Wonder, Peak Listening Hour, Underdog Champion,
-                      and Best Album Art</strong>.
-                  </p>
-                  <div class="awards-list" id="awards-list"></div>
-                </div>
-                <footer class="ceremony-controls">
-                  <div class="control-group">
-                    <span class="control-label">Time range</span>
-                    <div class="pill-toggle" role="radiogroup">
-                      <button
-                        class="time-range-toggle active"
-                        data-range="short_term"
-                        type="button"
-                      >
-                        Recent
-                      </button>
-                      <button
-                        class="time-range-toggle"
-                        data-range="medium_term"
-                        type="button"
-                      >
-                        Season
-                      </button>
-                      <button
-                        class="time-range-toggle"
-                        data-range="long_term"
-                        type="button"
-                      >
-                        All-time
-                      </button>
-                    </div>
-                  </div>
-                  <div class="ceremony-actions">
-                    <button id="replay-button" class="btn btn-ghost btn-xs" type="button">
-                      Replay ceremony
-                    </button>
-                    <button id="share-button" class="btn btn-ghost btn-xs" type="button">
-                      Share / export
-                    </button>
-                  </div>
-                </footer>
-              </section>
-
-              <section class="panel" aria-labelledby="panel-data-title">
-                <header class="panel-header">
-                  <h2 id="panel-data-title" class="panel-title">
-                    <span class="panel-title-highlight">Stats</span> &amp; context
-                  </h2>
-                  <div class="panel-header-meta">
-                    <span id="data-status-label">No data loaded yet</span>
-                  </div>
-                </header>
-                <div id="data-panel-body" class="panel-body">
-                  <p class="state-message">
-                    Once connected, we&rsquo;ll surface quick insights about your listening:
-                    track count, artist diversity, tempo &amp; energy tendencies, and your
-                    busiest hours and days.
-                  </p>
-                  <ul id="data-insights-list" style="margin: 6px 0 0 18px; padding: 0;">
-                    <li style="margin-bottom: 3px; color: var(--muted);">
-                      Top tracks &amp; artists from Spotify&rsquo;s
-                      <code style="background: rgba(15,23,42,0.9); padding: 1px 4px; border-radius: 5px; border: 1px solid rgba(31,41,55,0.9);"
-                        >/me/top/*</code>
-                    </li>
-                    <li style="margin-bottom: 3px; color: var(--muted);">
-                      Recent listening timeline from
-                      <code style="background: rgba(15,23,42,0.9); padding: 1px 4px; border-radius: 5px; border: 1px solid rgba(31,41,55,0.9);"
-                        >/me/player/recently-played</code>
-                    </li>
-                    <li style="color: var(--muted);">
-                      Audio features for your tracks via
-                      <code style="background: rgba(15,23,42,0.9); padding: 1px 4px; border-radius: 5px; border: 1px solid rgba(31,41,55,0.9);"
-                        >/audio-features</code>
-                    </li>
-                  </ul>
-                </div>
-                <footer class="ceremony-controls">
-                  <div class="control-group">
-                    <span class="status-chip" id="api-status-chip">
-                      <span class="status-dot"></span>
-                      <span id="api-status-label">Ready for first sync</span>
-                    </span>
-                  </div>
-                  <div class="ceremony-actions">
-                    <button id="refresh-button" class="btn btn-ghost btn-xs" type="button">
-                      Refresh data
-                    </button>
-                  </div>
-                </footer>
-              </section>
-            </div>
-          </section>
+          </aside>
         </div>
-      </main>
+      </section>
+    </main>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <div style="font-weight: 600;">Building your award show…</div>
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem;">Fetching Spotify stats and calculating winners.</div>
+      </div>
     </div>
 
-    <div id="toast-container" class="toast-container" aria-live="polite"></div>
-    <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
 
-    <script src="./main.js"></script>
-  </body>
+  <script src="./main.js"></script>
+</body>
 </html>
-
 
